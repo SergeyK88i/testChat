@@ -30,6 +30,7 @@ type ChatInterfaceProps = {
 }
 
 export default function ChatInterface({ selectedSource, userRole = "requester" }: ChatInterfaceProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const [input, setInput] = useState("")
   const [showSuggestions, setShowSuggestions] = useState(true)
 
@@ -46,7 +47,7 @@ export default function ChatInterface({ selectedSource, userRole = "requester" }
         { icon: <Info className="h-4 w-4" />, text: "Как повысить надежность источника?" },
         { icon: <Sparkles className="h-4 w-4" />, text: "Приведи пример кода для валидации данных" },
       ]
-
+      
   return (
     <div className="flex flex-col h-[500px]">
       <div className="flex-1 overflow-y-auto p-4">
@@ -78,7 +79,7 @@ export default function ChatInterface({ selectedSource, userRole = "requester" }
           )}
         </div>
       </div>
-
+      
       <form className="border-t p-3 flex gap-2">
         <Input
           value={input}
@@ -86,6 +87,24 @@ export default function ChatInterface({ selectedSource, userRole = "requester" }
           placeholder="Введите ваш вопрос..."
           className="flex-1 h-9 text-sm rounded-full"
         />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                className="rounded-full h-8 w-8"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+              >
+                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{isFullscreen ? "Свернуть" : "Развернуть"}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <Button type="submit" size="icon" className="rounded-full h-9 w-9">
           <SendIcon size={16} />
         </Button>
