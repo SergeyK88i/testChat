@@ -82,11 +82,20 @@ export default function SourceMaturityPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [minScore, setMinScore] = useState(0)
   const isMobile = useMediaQuery("(max-width: 768px)")
-
+  // добавил useEffect для фиксации скролла
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.body.style.overflow = 'auto';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+  
   // Для владельца данных - автоматически выбираем его первый источник
   useEffect(() => {
     if (userRole === "owner" && userOwnedSources.length > 0 && !selectedSource) {
       setSelectedSource(userOwnedSources[0].id)
+      window.scrollTo(0, 0)
     }
   }, [userRole, selectedSource])
 
@@ -115,7 +124,7 @@ export default function SourceMaturityPage() {
   const sourceData = selectedSource ? sources.find((source) => source.id === selectedSource) : null
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 dark:from-background dark:to-background">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 dark:from-background dark:to-background ">
       {/* Корпоративная навигация */}
       <header className="border-b sticky top-0 z-50 bg-background">
         <div className="container flex h-16 items-center justify-between px-4">

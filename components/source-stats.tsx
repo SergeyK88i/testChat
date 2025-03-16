@@ -41,11 +41,12 @@ type SourceProps = {
     name: string
     score: number
     details: SourceDetails
-  }
+    owner: string
+  } 
   userRole?: "requester" | "owner"
 }
 
-export default function SourceStats({ source, userRole = "requester" }: SourceProps) {
+export default function SourceStats({ source, userRole = "owner" }: SourceProps) {
   const [activeTab, setActiveTab] = useState("overview")
   const [showOrderDialog, setShowOrderDialog] = useState(false)
 
@@ -96,7 +97,7 @@ export default function SourceStats({ source, userRole = "requester" }: SourcePr
   const canOrder = source.score >= 80
 
   return (
-    <div className="animate-in fade-in-50 slide-in-from-bottom-5 duration-500">
+    <div className="animate-in slide-in-from-bottom-5 duration-500 ">
       <Card className="shadow-lg border-primary/10">
         <CardContent className="p-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
