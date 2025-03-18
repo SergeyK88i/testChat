@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Shield,
   Zap,
+  Star
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -30,44 +31,6 @@ import { useMediaQuery } from "@/hooks/use-media-query"
 import ImprovementSuggestions from "@/components/improvement-suggestions"
 import OwnerSourceSelector from "@/components/owner-source-selector"
 
-// Пример данных источников (в реальном приложении эти данные могут приходить с API)
-const sources = [
-  {
-    id: "1",
-    name: "CRM система",
-    owner: "Отдел продаж",
-    score: 85,
-    details: { reliability: 90, accuracy: 80, completeness: 85 },
-  },
-  {
-    id: "2",
-    name: "Финансовая отчетность",
-    owner: "Финансовый отдел",
-    score: 72,
-    details: { reliability: 75, accuracy: 70, completeness: 71 },
-  },
-  {
-    id: "3",
-    name: "Клиентская база",
-    owner: "Отдел маркетинга",
-    score: 93,
-    details: { reliability: 95, accuracy: 92, completeness: 92 },
-  },
-  {
-    id: "4",
-    name: "Система учета товаров",
-    owner: "Логистический отдел",
-    score: 68,
-    details: { reliability: 65, accuracy: 70, completeness: 69 },
-  },
-  {
-    id: "5",
-    name: "HR данные",
-    owner: "Отдел кадров",
-    score: 78,
-    details: { reliability: 80, accuracy: 75, completeness: 79 },
-  },
-]
 
 // Пример источников, принадлежащих текущему пользователю (в реальном приложении это будет определяться на основе авторизации)
 const userOwnedSources = [
@@ -76,6 +39,58 @@ const userOwnedSources = [
 ]
 
 export default function SourceMaturityPage() {
+  // Пример данных источников (в реальном приложении эти данные могут приходить с API)
+const [sources, setSources] = useState([
+  {
+    id: "1",
+    name: "CRM система",
+    owner: "Отдел продаж",
+    score: 85,
+    details: { reliability: 90, accuracy: 80, completeness: 85 },
+    isFavorite: false
+  },
+  {
+    id: "2",
+    name: "Финансовая отчетность",
+    owner: "Финансовый отдел",
+    score: 72,
+    details: { reliability: 75, accuracy: 70, completeness: 71 },
+    isFavorite: false
+  },
+  {
+    id: "3",
+    name: "Клиентская база",
+    owner: "Отдел маркетинга",
+    score: 93,
+    details: { reliability: 95, accuracy: 92, completeness: 92 },
+    isFavorite: false
+  },
+  {
+    id: "4",
+    name: "Система учета товаров",
+    owner: "Логистический отдел",
+    score: 68,
+    details: { reliability: 65, accuracy: 70, completeness: 69 },
+    isFavorite: false
+  },
+  {
+    id: "5",
+    name: "HR данные",
+    owner: "Отдел кадров",
+    score: 78,
+    details: { reliability: 80, accuracy: 75, completeness: 79 },
+    isFavorite: false
+  },
+])
+console.log(sources)
+  const toggleFavorite = (id: string) => {
+    setSources(sources.map(source => 
+      source.id === id 
+        ? { ...source, isFavorite: !source.isFavorite }
+        : source
+    ))
+  }
+
   const [selectedSource, setSelectedSource] = useState<string | null>(null)
   const [userRole, setUserRole] = useState<"requester" | "owner">("requester")
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -112,14 +127,20 @@ export default function SourceMaturityPage() {
 
   // Фильтрация источников
   const filteredSources = useMemo(() => {
-    return sources.filter((source) => {
-      const matchesSearch =
-        source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        source.owner.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesScore = source.score >= minScore
-      return matchesSearch && matchesScore
-    })
-  }, [searchQuery, minScore])
+    return sources
+      .filter((source) => {
+        const matchesSearch = source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          source.owner.toLowerCase().includes(searchQuery.toLowerCase())
+        const matchesScore = source.score >= minScore
+        return matchesSearch && matchesScore
+      })
+      .sort((a, b) => {
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return 0;
+      })
+  }, [searchQuery, minScore, sources])
+  
 
   const sourceData = selectedSource ? sources.find((source) => source.id === selectedSource) : null
 
@@ -306,10 +327,27 @@ export default function SourceMaturityPage() {
                               <p className="text-sm text-muted-foreground">Владелец: {source.owner}</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          {/* <div className="flex items-center gap-2">
                             <Badge variant={getScoreVariant(source.score)}>{getScoreLabel(source.score)}</Badge>
                             <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                          </div> */}
+
+                          <div className="flex items-center gap-2">
+                            <Badge variant={getScoreVariant(source.score)}>{getScoreLabel(source.score)}</Badge>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleFavorite(source.id);
+                              }}
+                            >
+                              {source.isFavorite ? <Star className="h-4 w-4 text-red-500" /> : <Star className="h-4 w-4" />}
+                            </Button>
+                            {/* <ChevronRight className="h-5 w-5 text-muted-foreground" /> */}
                           </div>
+
+
                         </div>
                       ))
                     ) : (
