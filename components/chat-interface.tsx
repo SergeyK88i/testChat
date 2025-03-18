@@ -47,7 +47,16 @@ export default function ChatInterface({ selectedSource, userRole = "requester" }
         { icon: <Info className="h-4 w-4" />, text: "Как повысить надежность источника?" },
         { icon: <Sparkles className="h-4 w-4" />, text: "Приведи пример кода для валидации данных" },
       ]
-      
+      const chatContent = (
+        <>
+          <div className="flex-1 overflow-y-auto p-4">
+            {/* Существующий контент чата */}
+          </div>
+          <form className="border-t p-3 flex gap-2">
+            {/* Существующая форма */}
+          </form>
+        </>
+      )  
   return (
     <div className="flex flex-col h-[500px]">
       <div className="flex-1 overflow-y-auto p-4">
